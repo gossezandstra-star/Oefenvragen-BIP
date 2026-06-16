@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIP Practice Exam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF1F4; --surface:#FFFFFF; --surface-2:#F6F8FA;
+    --ink:#11151C; --muted:#5B6573; --faint:#8A95A3; --line:#DCE2E8;
+    --signal:#0F8B86; --signal-bright:#14C2B8; --signal-soft:#E4F4F2;
+    --correct:#1B9E55; --correct-soft:#E6F5EC;
+    --wrong:#D8453C; --wrong-soft:#FBE9E8;
+    --ink-on-signal:#04302E;
+    --shadow:0 1px 2px rgba(17,21,28,.04),0 8px 24px rgba(17,21,28,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;padding:28px 18px 80px;min-height:100vh}
+  .wrap{max-width:760px;margin:0 auto}
+
+  header.mast{margin-bottom:18px}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--signal);font-weight:600;margin-bottom:8px}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(28px,5vw,40px);letter-spacing:-.02em;line-height:1.05}
+  h1 .thin{color:var(--muted);font-weight:400}
+  .sub{color:var(--muted);font-size:14.5px;margin-top:10px;max-width:62ch}
+
+  .topbtns{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .btn{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14.5px;padding:11px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .14s ease}
+  .btn-primary{background:var(--ink);color:#fff}
+  .btn-primary:hover{background:#000}
+  .btn-primary:disabled{background:var(--line);color:var(--faint);cursor:not-allowed}
+  .btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+  .btn-new{background:var(--signal);color:#fff}
+  .btn-new:hover{background:#0c7a75}
+  .btn-link{background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;text-decoration:underline;font-family:inherit;padding:6px}
+  .btn-link:hover{color:var(--signal)}
+
+  .spectrum-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:18px 0;box-shadow:var(--shadow)}
+  .spectrum-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;flex-wrap:wrap;gap:6px}
+  .spectrum-head .score{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px}
+  .spectrum-head .score b{color:var(--signal);font-size:19px}
+  .spectrum-head .meta{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted)}
+  .spectrum{display:flex;align-items:flex-end;gap:3px;height:34px}
+  .bar{flex:1;background:var(--line);border-radius:2px 2px 0 0;transition:background .25s ease,height .25s ease;min-height:5px}
+  .bar.correct{background:var(--correct)} .bar.wrong{background:var(--wrong)}
+  .bar.current{outline:2px solid var(--signal);outline-offset:1px}
+
+  .filters{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 22px}
+  .chip{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s ease;white-space:nowrap}
+  .chip:hover{border-color:var(--signal);color:var(--signal)}
+  .chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow)}
+  .qtop{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  .qnum{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);font-weight:600}
+  .badge{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:4px 9px;border-radius:6px}
+  .badge.ch{background:var(--signal-soft);color:var(--ink-on-signal)}
+  .badge.type{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+  .badge.gen{background:#FFF3E0;color:#9A6212;border:1px solid #F2D9A8}
+  .badge.hard{background:#FBE9E8;color:#B23631;border:1px solid #F0C3C0}
+  .qtext{font-size:18px;font-weight:500;letter-spacing:-.01em;line-height:1.4;margin-bottom:6px}
+  .hint{font-size:13px;color:var(--muted);font-style:italic;margin-bottom:4px}
+
+  .figure{margin:16px 0 4px;display:flex;justify-content:center;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .figure svg{max-width:100%;height:auto}
+
+  .options{display:flex;flex-direction:column;gap:9px;margin-top:16px}
+  .opt{text-align:left;width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:11px;padding:13px 15px;cursor:pointer;transition:all .14s ease;display:flex;gap:12px;align-items:flex-start;line-height:1.45}
+  .opt:hover:not(:disabled){border-color:var(--signal);background:var(--surface-2)}
+  .opt:disabled{cursor:default}
+  .opt .key{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--muted);flex-shrink:0;width:18px;text-align:center;margin-top:1px}
+  .opt.sel{border-color:var(--signal);background:var(--signal-soft)} .opt.sel .key{color:var(--signal)}
+  .opt.correct{border-color:var(--correct);background:var(--correct-soft)} .opt.correct .key{color:var(--correct)}
+  .opt.wrong{border-color:var(--wrong);background:var(--wrong-soft)} .opt.wrong .key{color:var(--wrong)}
+  .opt .mark{margin-left:auto;font-weight:700;font-size:15px;flex-shrink:0}
+  .opt.correct .mark{color:var(--correct)} .opt.wrong .mark{color:var(--wrong)}
+
+  .order-pool{display:flex;flex-direction:column;gap:9px;margin-top:16px}
+  .order-slot{display:flex;align-items:center;gap:11px;font-size:15px;border:1.5px solid var(--line);border-radius:11px;padding:12px 14px;background:var(--surface);cursor:pointer;transition:all .14s ease;line-height:1.4}
+  .order-slot:hover:not(.placed):not(.disabled){border-color:var(--signal);background:var(--surface-2)}
+  .order-slot.placed{background:var(--signal-soft);border-color:var(--signal)}
+  .order-slot.disabled{cursor:default;opacity:.55}
+  .order-slot .rank{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px;width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--muted);flex-shrink:0}
+  .order-slot.placed .rank{background:var(--signal);color:#fff}
+  .order-slot.ok{background:var(--correct-soft);border-color:var(--correct)} .order-slot.ok .rank{background:var(--correct);color:#fff}
+  .order-slot.bad{background:var(--wrong-soft);border-color:var(--wrong)} .order-slot.bad .rank{background:var(--wrong);color:#fff}
+
+  .actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;align-items:center}
+  .explain{margin-top:18px;border-left:3px solid var(--signal);background:var(--surface-2);border-radius:0 10px 10px 0;padding:14px 16px;font-size:14.5px;line-height:1.55;animation:slideIn .25s ease}
+  .explain .verdict{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;margin-bottom:5px}
+  .explain.right .verdict{color:var(--correct)} .explain.wrong .verdict{color:var(--wrong)}
+  @keyframes slideIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px}
+
+  .results{text-align:center;padding:34px 24px}
+  .results h2{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+  .bigscore{font-family:'Space Grotesk',sans-serif;font-size:64px;font-weight:700;line-height:1;letter-spacing:-.03em;margin:14px 0}
+  .bigscore .pct{color:var(--signal)}
+  .results .breakdown{text-align:left;max-width:460px;margin:24px auto 0;display:flex;flex-direction:column;gap:8px}
+  .brk-row{display:flex;align-items:center;gap:10px;font-size:13.5px}
+  .brk-row .lbl{flex:1.3;color:var(--muted)}
+  .brk-track{flex:2;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+  .brk-fill{height:100%;background:var(--signal);border-radius:4px}
+  .brk-row .num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);width:42px;text-align:right}
+
+  .footnote{text-align:center;color:var(--faint);font-size:12px;margin-top:28px;font-family:'JetBrains Mono',monospace;line-height:1.7}
+  @media (max-width:480px){body{padding:20px 12px 70px}.card{padding:18px}.qtext{font-size:16.5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="eyebrow">WBBE060-05 · self-test</div>
+    <h1>Biomedical Image Processing <span class="thin">— oefentoets</span></h1>
+    <p class="sub">A fresh exam is drawn every time: questions are reshuffled, answer options are reordered, and many questions (histograms, pixel grids, erosion/dilation, kernels, confusion matrices, windowing) are <b>generated on the fly</b>, so no two rounds are the same. Tougher items are flagged <b>challenge</b>. Filter by chapter to drill a topic.</p>
+    <div class="topbtns">
+      <button class="btn btn-new" id="newExam">🔀 Generate a new exam</button>
+    </div>
+  </header>
+
+  <div class="spectrum-card">
+    <div class="spectrum-head">
+      <div class="score">Score: <b id="scoreNum">0</b> <span style="color:var(--muted);font-weight:400">/ <span id="answeredNum">0</span> answered</span></div>
+      <div class="meta" id="poolMeta"></div>
+    </div>
+    <div class="spectrum" id="spectrum"></div>
+  </div>
+
+  <div class="filters" id="filters"></div>
+  <div id="stage"></div>
+
+  <div class="footnote">
+    Built from your own BIP summary · all 8 chapters · figures drawn in-page (no broken images)<br>
+    Single self-contained file — send it to a friend and they just open it in any browser.
+  </div>
+</div>
+
+<script>
+/* ===================== utils ===================== */
+const $=s=>document.querySelector(s);
+const el=(t,c)=>{const e=document.createElement(t);if(c)e.className=c;return e;};
+const KEYS="ABCDEFGH";
+const randInt=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+const CH={1:"Basics of Imaging",2:"Convolution & Filters",3:"Enhancement",4:"Segmentation",5:"Morphology",6:"Deep Learning",7:"Feature Extraction",8:"Evaluation"};
+
+/* ===================== SVG figure builders ===================== */
+function gridFigure(grid,R,C){
+  const s=34; const w=C*s, h=R*s; let cells="";
+  for(let r=0;r<R;r++)for(let c=0;c<C;c++){
+    const v=grid[r][c], x=c*s, y=r*s;
+    cells+=`<rect x="${x}" y="${y}" width="${s}" height="${s}" fill="${v?'var(--ink)':'var(--surface)'}" stroke="var(--line)" stroke-width="1"/>`;
+    cells+=`<text x="${x+s/2}" y="${y+s/2}" dominant-baseline="central" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="${v?'#fff':'var(--faint)'}">${v}</text>`;
+  }
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" role="img" aria-label="binary pixel grid">${cells}</svg>`;
+}
+function confusionFigure(tp,fp,fn,tn){
+  const cell=66, lab=66, gap=8;
+  const x0=lab+4, y0=lab+4, x1=x0+cell+gap, y1=y0+cell+gap;
+  const w=x1+cell+6, h=y1+cell+6;
+  const box=(x,y,val,sub,col)=>`<rect x="${x}" y="${y}" width="${cell}" height="${cell}" rx="8" fill="${col}" stroke="var(--line)"/>
+    <text x="${x+cell/2}" y="${y+cell/2-6}" text-anchor="middle" font-family="Space Grotesk" font-size="21" font-weight="700" fill="var(--ink)">${val}</text>
+    <text x="${x+cell/2}" y="${y+cell/2+15}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="var(--muted)">${sub}</text>`;
+  let s=`<svg viewBox="0 0 ${w} ${h}" width="${w}">`;
+  s+=`<text x="${x0+cell/2}" y="${y0-12}" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--signal)">Pred +</text>`;
+  s+=`<text x="${x1+cell/2}" y="${y0-12}" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--muted)">Pred −</text>`;
+  s+=`<text x="${lab-4}" y="${y0+cell/2}" text-anchor="end" dominant-baseline="central" font-family="JetBrains Mono" font-size="11" fill="var(--signal)">Act +</text>`;
+  s+=`<text x="${lab-4}" y="${y1+cell/2}" text-anchor="end" dominant-baseline="central" font-family="JetBrains Mono" font-size="11" fill="var(--muted)">Act −</text>`;
+  s+=box(x0,y0,tp,"TP","var(--correct-soft)");
+  s+=box(x1,y0,fn,"FN","var(--wrong-soft)");
+  s+=box(x0,y1,fp,"FP","var(--wrong-soft)");
+  s+=box(x1,y1,tn,"TN","var(--correct-soft)");
+  return s+`</svg>`;
+}
+function histogramFigure(bins){
+  const n=bins.length, bw=Math.min(40,300/n), gap=7, w=n*(bw+gap)+12, h=128, base=h-16;
+  const max=Math.max(...bins,1); let s=`<svg viewBox="0 0 ${w} ${h}" width="${w}">`;
+  s+=`<line x1="8" y1="${base}" x2="${w-4}" y2="${base}" stroke="var(--line)"/>`;
+  bins.forEach((v,i)=>{const bh=(v/max)*(base-12), x=10+i*(bw+gap);
+    s+=`<rect x="${x}" y="${base-bh}" width="${bw}" height="${bh}" rx="2" fill="var(--signal)"/>`;});
+  return s+`</svg>`;
+}
+function kernelFigure(m,note){
+  const s=46, w=3*s+(note?70:8), h=3*s+8; let cells="";
+  for(let r=0;r<3;r++)for(let c=0;c<3;c++){
+    const x=4+c*s, y=4+r*s, val=m[r][c], neg=String(val).startsWith("-");
+    cells+=`<rect x="${x}" y="${y}" width="${s}" height="${s}" fill="${neg?'var(--wrong-soft)':'var(--surface)'}" stroke="var(--line)"/>`;
+    cells+=`<text x="${x+s/2}" y="${y+s/2}" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono" font-size="15" font-weight="600" fill="var(--ink)">${val}</text>`;
+  }
+  const noteT=note?`<text x="${3*s+12}" y="${4+1.5*s}" dominant-baseline="central" font-family="JetBrains Mono" font-size="14" fill="var(--muted)">${note}</text>`:"";
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}">${cells}${noteT}</svg>`;
+}
+function countComponents(grid,R,C,conn){
+  const seen=Array.from({length:R},()=>Array(C).fill(false));
+  const d4=[[1,0],[-1,0],[0,1],[0,-1]];
+  const dirs=conn===8?d4.concat([[1,1],[1,-1],[-1,1],[-1,-1]]):d4;
+  let count=0;
+  for(let r=0;r<R;r++)for(let c=0;c<C;c++){
+    if(grid[r][c]===1&&!seen[r][c]){count++;const st=[[r,c]];seen[r][c]=true;
+      while(st.length){const[y,x]=st.pop();for(const[dy,dx]of dirs){const ny=y+dy,nx=x+dx;
+        if(ny>=0&&ny<R&&nx>=0&&nx<C&&grid[ny][nx]===1&&!seen[ny][nx]){seen[ny][nx]=true;st.push([ny,nx]);}}}}
+  }
+  return count;
+}
+
+/* ===================== generators ===================== */
+function genBitDepth(){
+  const n=pick([2,3,4,5,6,8,10,12,16]); const ans=Math.pow(2,n);
+  const set=new Set([String(ans),String(Math.pow(2,n-1)),String(Math.pow(2,n+1)),String(2*n)]);
+  const opts=shuffle([...set]).slice(0,4); if(!opts.includes(String(ans)))opts[0]=String(ans);
+  return {ch:1,type:"single",gen:true,
+    q:`A medical image uses a bit depth of <b>${n} bits</b>. How many grey levels can it represent?`,
+    options:opts,correct:opts.indexOf(String(ans)),
+    ex:`Grey levels = 2ⁿ = 2<sup>${n}</sup> = <b>${ans}</b>. Standard photography uses 8-bit (256); most medical modalities use 12-bit (4096) to keep subtle tissue differences.`};
+}
+function genConnectivity(){
+  const R=6,C=6; let grid,c4,c8,t=0;
+  do{grid=Array.from({length:R},()=>Array.from({length:C},()=>Math.random()<0.42?1:0));
+     c4=countComponents(grid,R,C,4);c8=countComponents(grid,R,C,8);t++;}
+  while((c4<2||c4>5||c8<2||c8>5||c4===c8)&&t<80);
+  const conn=Math.random()<0.5?4:8, ans=conn===4?c4:c8, other=conn===4?c8:c4;
+  const set=new Set([String(ans),String(other)]);
+  [ans-1,ans+1,ans+2,other+1,other-1].forEach(v=>{if(v>=1&&set.size<4)set.add(String(v));});
+  while(set.size<4)set.add(String(randInt(2,7)));
+  const opts=shuffle([...set]).slice(0,4); if(!opts.includes(String(ans)))opts[0]=String(ans);
+  return {ch:5,type:"single",gen:true,
+    q:`How many connected components does this binary image contain under <b>${conn}-connectivity</b>?`,
+    figure:gridFigure(grid,R,C),options:opts,correct:opts.indexOf(String(ans)),
+    ex:`Under ${conn}-connectivity: <b>${ans}</b> components. (Under ${conn===4?8:4}-connectivity it would be ${other}.) 8-connectivity counts diagonal neighbours, so it merges diagonally-touching blobs → usually fewer components than 4-connectivity.`};
+}
+function genConfusion(){
+  const tp=randInt(5,20),fp=randInt(0,14),fn=randInt(0,10),tn=randInt(12,40),total=tp+fp+fn+tn;
+  const M={"Precision (PPV) = TP/(TP+FP)":tp/(tp+fp),"Recall / Sensitivity = TP/(TP+FN)":tp/(tp+fn),
+    "Dice / F1 = 2·TP/(2·TP+FP+FN)":2*tp/(2*tp+fp+fn),"Accuracy = (TP+TN)/total":(tp+tn)/total};
+  const keys=Object.keys(M), askKey=pick(keys), ans=M[askKey].toFixed(2);
+  const set=new Set([ans]);
+  shuffle(keys.slice()).forEach(k=>{if(set.size<4){const v=M[k].toFixed(2);if(v!==ans)set.add(v);}});
+  while(set.size<4){const v=Math.min(0.99,Math.max(0.02,M[askKey]+(Math.random()<.5?-1:1)*randInt(8,25)/100)).toFixed(2);set.add(v);}
+  const opts=shuffle([...set]).slice(0,4); if(!opts.includes(ans))opts[0]=ans;
+  return {ch:8,type:"single",gen:true,
+    q:`From the confusion matrix below, compute the <b>${askKey.split(' = ')[0]}</b>.`,
+    figure:confusionFigure(tp,fp,fn,tn),options:opts,correct:opts.indexOf(ans),
+    ex:`${askKey} = <b>${ans}</b>. (TP=${tp}, FP=${fp}, FN=${fn}, TN=${tn}.) Mind the mix-up: precision uses FP (false alarms), recall uses FN (misses).`};
+}
+function genDiceIoU(){
+  const fromIoU=Math.random()<0.5;
+  if(fromIoU){
+    const iou=randInt(30,90)/100, dice=2*iou/(1+iou), ans=dice.toFixed(2);
+    const set=new Set([ans,iou.toFixed(2)]);
+    while(set.size<4)set.add(Math.min(0.99,Math.max(0.05,dice+(Math.random()<.5?-1:1)*randInt(5,20)/100)).toFixed(2));
+    const opts=shuffle([...set]).slice(0,4); if(!opts.includes(ans))opts[0]=ans;
+    return {ch:8,type:"single",gen:true,
+      q:`A prediction has an IoU (Jaccard) of <b>${iou.toFixed(2)}</b>. What is its Dice coefficient?`,
+      options:opts,correct:opts.indexOf(ans),
+      ex:`Dice = 2·IoU/(1+IoU) = 2·${iou.toFixed(2)}/(1+${iou.toFixed(2)}) = <b>${ans}</b>. Since 2/(1+IoU) ≥ 1, Dice ≥ IoU always.`};
+  } else {
+    const dice=randInt(40,95)/100, iou=dice/(2-dice), ans=iou.toFixed(2);
+    const set=new Set([ans,dice.toFixed(2)]);
+    while(set.size<4)set.add(Math.min(0.99,Math.max(0.05,iou+(Math.random()<.5?-1:1)*randInt(5,20)/100)).toFixed(2));
+    const opts=shuffle([...set]).slice(0,4); if(!opts.includes(ans))opts[0]=ans;
+    return {ch:8,type:"single",gen:true,hard:true,
+      q:`A prediction has a Dice coefficient of <b>${dice.toFixed(2)}</b>. What is its IoU (Jaccard)?`,
+      options:opts,correct:opts.indexOf(ans),
+      ex:`IoU = Dice/(2 − Dice) = ${dice.toFixed(2)}/(2 − ${dice.toFixed(2)}) = <b>${ans}</b>. Since IoU ≤ Dice, the IoU is the smaller value.`};
+  }
+}
+function genAgatston(){
+  const hu=randInt(130,520), w=hu<200?1:hu<300?2:hu<400?3:4, opts=shuffle(["1","2","3","4"]);
+  return {ch:5,type:"single",gen:true,
+    q:`In Agatston scoring, a calcified lesion has a peak CT number of <b>${hu} HU</b>. What density weighting factor w does it get?`,
+    options:opts,correct:opts.indexOf(String(w)),
+    ex:`Agatston weights: w=1 (130–199), 2 (200–299), 3 (300–399), 4 (≥400 HU). At ${hu} HU → w = <b>${w}</b>. Lesion score S = w · area.`};
+}
+function genHistogramBinary(){
+  const isBin=Math.random()<0.5; let bins;
+  if(isBin){bins=Array(7).fill(0);bins[0]=randInt(8,25);bins[6]=randInt(8,25);}
+  else bins=Array.from({length:7},()=>randInt(2,25));
+  const opts=["Yes — it could be binary","No — it cannot be binary"];
+  return {ch:5,type:"single",gen:true,
+    q:`Could this histogram belong to a <b>binary</b> image?`,figure:histogramFigure(bins),
+    options:opts,correct:isBin?0:1,
+    ex:isBin?`<b>Yes.</b> Only two bins (at the extremes) are populated — exactly two distinct pixel values. The bar heights don't matter, only that there are two populated bins.`
+            :`<b>No.</b> Many bins are populated, so the image has many grey levels. A binary image collapses to exactly two spikes.`};
+}
+function genBrightness(){
+  const mode=pick(["dark","bright","balanced"]), peak=mode==="dark"?1:mode==="bright"?6:3;
+  const bins=Array.from({length:8},(_,i)=>Math.max(0,Math.round(22*Math.exp(-((i-peak)**2)/3))+randInt(0,3)));
+  const opts=["Mostly dark (peak near 0)","Mostly bright (peak near max)","Balanced / mid-grey"];
+  const correct=mode==="dark"?0:mode==="bright"?1:2;
+  return {ch:3,type:"single",gen:true,
+    q:`What does this intensity histogram tell you about the image?`,figure:histogramFigure(bins),
+    options:opts,correct,
+    ex:`The mass sits ${mode==="dark"?"near the low end → a <b>dark</b> image":mode==="bright"?"near the high end → a <b>bright</b> image":"around the middle → a <b>balanced</b> mid-grey image"}. Left-shifted = dark, right-shifted = bright, narrow = low contrast, wide = high contrast.`};
+}
+function genKernel(){
+  const K=[
+    {m:[["1","1","1"],["1","1","1"],["1","1","1"]],note:"× 1/9",ans:"Smoothing / blur (positive-weight average)",
+     ex:"All-positive weights summing to 1 = a mean/box filter → <b>smoothing</b>. Reduces noise but blurs edges. Positive-only kernels can never detect edges."},
+    {m:[["0","1","0"],["1","-4","1"],["0","1","0"]],note:"",ans:"Edge detection (Laplacian, 2nd derivative)",
+     ex:"The <b>Laplacian</b>: an isotropic 2nd-derivative operator (negative centre, positive neighbours). Responds to all edge orientations and is very noise-sensitive."},
+    {m:[["-1","0","1"],["-2","0","2"],["-1","0","1"]],note:"",ans:"Detects vertical edges (Sobel ∂x)",
+     ex:"The Sobel ∂x kernel measures the horizontal gradient → responds to <b>vertical edges</b>. The heavier centre row (±2) gives noise robustness over Prewitt."},
+    {m:[["0","0","0"],["0","1","0"],["0","0","0"]],note:"",ans:"Leaves the image unchanged (identity)",
+     ex:"A single 1 at the centre = the <b>identity</b> kernel; output equals input."},
+    {m:[["0","-1","0"],["-1","5","-1"],["0","-1","0"]],note:"",ans:"Sharpening",
+     ex:"Strong positive centre with negative neighbours = <b>sharpening</b>: it amplifies the difference between a pixel and its surroundings. Mixed +/− weights = edge/contrast enhancement, not smoothing."}
+  ];
+  const k=pick(K);
+  const opts=shuffle([k.ans,...shuffle(K.filter(x=>x.ans!==k.ans)).slice(0,3).map(x=>x.ans)]);
+  return {ch:2,type:"single",gen:true,
+    q:`What is the primary effect of this convolution kernel?`,figure:kernelFigure(k.m,k.note),
+    options:opts,correct:opts.indexOf(k.ans),ex:k.ex};
+}
+function genInterp(){
+  const mask=Math.random()<0.5, opts=["Nearest-neighbour","Bilinear or bicubic"];
+  return {ch:3,type:"single",gen:true,
+    q:`You need to resample ${mask?"a <b>binary label mask</b>":"a <b>continuous-valued CT slice</b>"}. Which interpolation is appropriate?`,
+    options:opts,correct:mask?0:1,
+    ex:mask?"Use <b>nearest-neighbour</b> for label/mask images — averaging would invent spurious intermediate labels (e.g. a '1.5')."
+           :"Use <b>bilinear/bicubic</b> for continuous-valued images for plausible in-between intensities. (This does change the histogram by creating new values.)"};
+}
+function genSplit(){
+  const t=pick([{a:"update the model weights",ans:"Training set"},
+                {a:"tune hyperparameters and detect overfitting",ans:"Validation set"},
+                {a:"give the final unbiased evaluation (used once)",ans:"Test set"}]);
+  const opts=shuffle(["Training set","Validation set","Test set"]);
+  return {ch:6,type:"single",gen:true,
+    q:`Which data split is used to <b>${t.a}</b>?`,options:opts,correct:opts.indexOf(t.ans),
+    ex:`Training updates weights; Validation tunes hyperparameters & flags overfitting; Test is the final evaluation, used once. → <b>${t.ans}</b>.`};
+}
+function genHaralick(){
+  const all=["A very uniform, regular, repetitive texture","A complex, heterogeneous, disordered texture",
+             "Large local intensity variation (coarse texture / strong edges)","Neighbouring pixels have very similar intensities"];
+  const f=pick([{a:"high energy (angular second moment)",ans:all[0]},{a:"high entropy",ans:all[1]},
+                {a:"high contrast",ans:all[2]},{a:"high homogeneity",ans:all[3]}]);
+  const opts=shuffle(all.slice());
+  return {ch:7,type:"single",gen:true,
+    q:`A normalised GLCM yields <b>${f.a}</b>. What does this indicate?`,options:opts,correct:opts.indexOf(f.ans),
+    ex:`Energy ↑ = uniform/regular; entropy ↑ = complex/disordered; contrast ↑ = strong local variation; homogeneity ↑ = neighbours similar (mass near the diagonal). → <b>${f.ans.toLowerCase()}</b>.`};
+}
+
+function morph3(g,R,C,op){
+  const out=Array.from({length:R},()=>Array(C).fill(0));
+  for(let r=0;r<R;r++)for(let c=0;c<C;c++){let all=1,any=0;
+    for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const nr=r+dr,nc=c+dc;
+      const v=(nr>=0&&nr<R&&nc>=0&&nc<C)?g[nr][nc]:0; if(v)any=1;else all=0;}
+    out[r][c]=op==="erode"?all:any;}
+  return out;
+}
+function gen3x3(op){
+  const R=6,C=6; let grid,res,cnt,orig,t=0;
+  do{grid=Array.from({length:R},()=>Array.from({length:C},()=>Math.random()<0.55?1:0));
+     res=morph3(grid,R,C,op);cnt=res.flat().reduce((a,b)=>a+b,0);orig=grid.flat().reduce((a,b)=>a+b,0);t++;}
+  while((cnt<1||(op==="erode"&&cnt>16)||cnt===orig)&&t<90);
+  const set=new Set([String(cnt),String(orig)]);
+  [cnt-1,cnt+1,cnt-2,cnt+2,orig-2].forEach(v=>{if(v>=0&&set.size<4)set.add(String(v));});
+  while(set.size<4)set.add(String(randInt(1,24)));
+  const opts=shuffle([...set]).slice(0,4); if(!opts.includes(String(cnt)))opts[0]=String(cnt);
+  return {ch:5,type:"single",gen:true,hard:true,
+    q:`The binary image below is <b>${op==="erode"?"eroded":"dilated"}</b> with a 3×3 square structuring element. How many foreground (=1) pixels remain in the result?`,
+    figure:gridFigure(grid,R,C),options:opts,correct:opts.indexOf(String(cnt)),
+    ex:`${op==="erode"?"Erosion keeps a pixel only if its entire 3×3 window is foreground (out-of-image counts as background), so every border/thin pixel is removed":"Dilation sets a pixel if ANY cell in its 3×3 window is foreground, so the object grows outward"}. Result: <b>${cnt}</b> foreground pixels (original has ${orig}).`};
+}
+function genStorage(){
+  const side=pick([128,256,512]), bits=pick([8,16]), bpp=bits/8, KB=side*side*bpp/1024;
+  const fmt=v=> v>=1024?(v/1024)+" MB":v+" KB";
+  const ans=fmt(KB);
+  const cand=[ans,fmt(KB*2),fmt(KB/2),fmt(KB*(bits===8?2:0.5)),fmt(KB*4)];
+  const opts=shuffle([...new Set(cand.filter(Boolean))]).slice(0,4); if(!opts.includes(ans))opts[0]=ans;
+  return {ch:1,type:"single",gen:true,hard:true,
+    q:`Raw (uncompressed) storage size of a <b>${side}×${side}</b> image at <b>${bits}-bit</b> depth? (1 KB = 1024 bytes)`,
+    options:opts,correct:opts.indexOf(ans),
+    ex:`Bytes = ${side}×${side}×(${bits}/8) = ${side*side*bpp} bytes = <b>${ans}</b>. Bit depth sets bytes-per-pixel (${bpp} here); total = pixels × bytes-per-pixel.`};
+}
+function genStat(){
+  const snr=Math.random()<0.5, sig=randInt(60,120), bg=randInt(10,50), noise=randInt(4,15);
+  if(snr){const ans=(sig/noise).toFixed(1);
+    const set=new Set([ans,(sig/bg).toFixed(1),((sig-bg)/noise).toFixed(1)]);
+    while(set.size<4)set.add((sig/noise+(Math.random()<.5?-1:1)*randInt(1,4)).toFixed(1));
+    const opts=shuffle([...set]).slice(0,4); if(!opts.includes(ans))opts[0]=ans;
+    return {ch:1,type:"single",gen:true,hard:true,
+      q:`A region has mean signal S = <b>${sig}</b> and noise σ = <b>${noise}</b>. What is the SNR?`,
+      options:opts,correct:opts.indexOf(ans),
+      ex:`SNR = S/σ = ${sig}/${noise} = <b>${ans}</b>. Don't confuse with CNR, which uses the difference between two regions: |S_obj − S_bg|/σ.`};
+  }
+  const ans=((sig-bg)/noise).toFixed(1);
+  const set=new Set([ans,(sig/noise).toFixed(1),(bg/noise).toFixed(1)]);
+  while(set.size<4)set.add(((sig-bg)/noise+(Math.random()<.5?-1:1)*randInt(1,4)).toFixed(1));
+  const opts=shuffle([...set]).slice(0,4); if(!opts.includes(ans))opts[0]=ans;
+  return {ch:1,type:"single",gen:true,hard:true,
+    q:`An object has mean signal <b>${sig}</b>, the background <b>${bg}</b>, and noise σ = <b>${noise}</b>. What is the CNR?`,
+    options:opts,correct:opts.indexOf(ans),
+    ex:`CNR = |S_obj − S_bg|/σ = |${sig} − ${bg}|/${noise} = <b>${ans}</b>. SNR (= S/σ) would instead be the absolute signal over noise.`};
+}
+function genWindow(){
+  const presets=[[40,400],[400,1800],[-600,1500],[35,80]];
+  const [WL,WW]=pick(presets), low=WL-WW/2, high=WL+WW/2;
+  const sc=pick(["below","above","inside"]);
+  let I; if(sc==="below")I=low-randInt(20,200); else if(sc==="above")I=high+randInt(20,200); else I=Math.round(low+(randInt(20,80)/100)*WW);
+  const correctTxt = I<low?"0 (black)": I>high?"255 (white)":"a mid-grey value via linear mapping";
+  const txt = I<low?`below the lower bound ${low}, so it clips to black (0)`
+            : I>high?`above the upper bound ${high}, so it clips to white (255)`
+            :`inside the window, so it maps linearly: (${I} − ${low})/${WW} × 255 ≈ ${Math.round((I-low)/WW*255)}`;
+  const opts=shuffle(["0 (black)","255 (white)","a mid-grey value via linear mapping"]);
+  return {ch:3,type:"single",gen:true,hard:true,
+    q:`A CT display uses window level WL = <b>${WL}</b> and window width WW = <b>${WW}</b> (window = [${low}, ${high}] HU). A pixel measures <b>${I} HU</b>. What grey value is displayed?`,
+    options:opts,correct:opts.indexOf(correctTxt),
+    ex:`The pixel is ${txt}. The window spans [WL−WW/2, WL+WW/2] = [${low}, ${high}]; values below clip to 0, above clip to 255, inside map linearly.`};
+}
+
+const GENERATORS=[
+  {ch:1,gen:genBitDepth},{ch:1,gen:genStorage},{ch:1,gen:genStat},
+  {ch:2,gen:genKernel},{ch:3,gen:genBrightness},{ch:3,gen:genInterp},{ch:3,gen:genWindow},
+  {ch:5,gen:genConnectivity},{ch:5,gen:genAgatston},{ch:5,gen:genHistogramBinary},
+  {ch:5,gen:()=>gen3x3("erode")},{ch:5,gen:()=>gen3x3("dilate")},
+  {ch:6,gen:genSplit},{ch:7,gen:genHaralick},{ch:8,gen:genConfusion},{ch:8,gen:genDiceIoU}
+];
+
+/* ===================== static bank ===================== */
+const STATIC=[
+/* CH1 */
+{ch:1,type:"single",q:"Which of these is a projection image?",options:["Ultrasound slice","Plain X-ray radiograph","A single MRI axial slice","An endoscopy video frame"],correct:1,ex:"An X-ray is the canonical <b>projection</b> image: rays traverse the 3D body and are attenuated by tissue density, forming a 2D shadow. Depth is lost — hence CT needs multiple projections. US/MRI slices are cross-sectional; endoscopy is a surface image."},
+{ch:1,type:"single",q:"In a Maximum Intensity Projection (MIP), what value is projected along each ray?",options:["Mean voxel value","Maximum voxel value","Minimum voxel value","Median voxel value"],correct:1,ex:"MIP keeps the <b>maximum</b> voxel value along each ray, highlighting contrast-filled vessels and calcifications. It's post-processing — no new acquisition required."},
+{ch:1,type:"single",q:"A 10 × 10 pixel image necessarily represents a 10 × 10 mm region.",options:["True","False"],correct:1,ex:"<b>False.</b> Pixel size has no inherent metric meaning — it depends on acquisition, and x/y/z resolution need not be equal (anisotropic voxels)."},
+{ch:1,type:"single",q:"Aliasing (the Moiré / wrap-around artefact) occurs when…",options:["the bit depth is too low","the sampling frequency is below twice the highest spatial frequency","lossy compression is applied","the dynamic range is too wide"],correct:1,ex:"A violation of the <b>Nyquist criterion</b>: sampling below 2× the highest frequency folds high frequencies back as Moiré. In MRI this is fold-over / wrap-around."},
+{ch:1,type:"multi",q:"Select ALL true statements about a LUT / windowing.",options:["It changes only the displayed appearance","It permanently alters the stored pixel values","It enables fast interactive windowing","It is used for pseudo-colour display"],correct:[0,2,3],ex:"A LUT maps stored → displayed values; the <b>stored pixel data is never altered</b>, so 'permanently alters the stored values' is false. It makes windowing fast and enables pseudo-colouring."},
+{ch:1,type:"single",q:"SNR and CNR differ in that…",options:["SNR is the difference between two regions; CNR is absolute signal","SNR is the absolute signal level; CNR is the difference between two regions relative to noise","They are identical","CNR ignores noise"],correct:1,ex:"SNR = signal/noise (absolute strength). CNR = |S_object − S_background|/σ_noise — contrast between two regions relative to noise. Both higher = better."},
+{ch:1,type:"single",q:"Which statement about lossy compression in medical imaging is correct?",options:["It is preferred for primary diagnostic images","Its reconstruction is pixel-perfect","It can discard diagnostically relevant detail and is often not permitted for primary diagnosis","Its difference image is always zero"],correct:2,ex:"Lossy compression (JPEG, WebP) <b>permanently discards</b> data — subtle lesions or calcifications may be lost; the difference image is non-zero. Lossless (PNG, TIFF) is mandated for primary diagnosis."},
+{ch:1,type:"single",q:"In digitization, which step is the SPATIAL discretisation?",options:["Quantization","Sampling","Windowing","Interpolation"],correct:1,ex:"<b>Sampling</b> measures the signal at discrete spatial locations (the pixel/voxel grid). <b>Quantization</b> maps each sample's continuous intensity to a finite set of integer levels."},
+{ch:1,type:"single",q:"The partial volume effect arises because…",options:["the detector is miscalibrated","a voxel spanning a tissue boundary records the average of both tissues","the patient moved","beam hardening occurs"],correct:1,ex:"When a structure is smaller than the voxel, the voxel records the <b>average</b> of the tissues it spans. This blurs boundaries and makes thin structures look smaller (and the wrong intensity)."},
+{ch:1,type:"single",q:"An anisotropic voxel is one where…",options:["all dimensions are equal","at least one dimension differs in size (e.g. 0.5 mm in-plane, 5 mm slice)","the intensity varies","it lies on a boundary"],correct:1,ex:"<b>Anisotropic</b> voxels have unequal dimensions (common in 3D CT/MRI). Many algorithms assume isotropic input, so anisotropic data must be resampled (with interpolation) first."},
+
+/* CH2 */
+{ch:2,type:"single",q:"Which is true of the median filter?",options:["It is a linear convolution","It is non-linear and cannot be expressed as a convolution","It blurs salt-and-pepper noise but smears edges","It only works on binary images"],correct:1,ex:"The median filter is <b>non-linear</b> — output is the median of the window (by sorting), not a weighted sum. It's edge-preserving and ideal against salt-and-pepper noise. The mean filter, by contrast, IS a convolution."},
+{ch:2,type:"single",q:"A 3×3 kernel with only positive weights will…",options:["enhance edges","detect vertical edges only","smooth / blur the image","sharpen detail"],correct:2,ex:"Only-positive weights = a weighted average → <b>smoothing</b>. Edge enhancement always requires negative coefficients."},
+{ch:2,type:"multi",q:"Select ALL operators that are edge detectors.",options:["Sobel","Box (mean) filter","Laplacian","Prewitt","Roberts cross"],correct:[0,2,3,4],ex:"Sobel, Prewitt, Roberts approximate the first derivative; the Laplacian is a second-derivative operator. The box/mean filter smooths — it is not an edge detector."},
+{ch:2,type:"single",q:"Convolution in the spatial domain is equivalent to which operation in the frequency domain?",options:["Convolution","Addition","Multiplication","Subtraction"],correct:2,ex:"𝓕{f∗h} = 𝓕{f}·𝓕{h} — spatial convolution = <b>multiplication</b> of spectra. This is why filters can be applied via the FFT (cheaper for large kernels)."},
+{ch:2,type:"single",q:"Why is Sobel slightly more noise-robust than Prewitt?",options:["It uses a 2×2 kernel","It weights the centre row/column more heavily","It is a 2nd-derivative operator","It needs no orthogonal pair"],correct:1,ex:"Sobel's heavier centre weighting (…2…) suppresses noise a bit better. Robustness order: <b>Sobel > Prewitt > Roberts</b>. Both are anisotropic and need an orthogonal pair (hx+hy)."},
+{ch:2,type:"single",q:"In Digital Subtraction Angiography (DSA), the dominant artefact is…",options:["beam hardening","misregistration from patient motion between mask and live images","ring artefact","aliasing"],correct:1,ex:"DSA subtracts a pre-contrast mask from live images. Patient motion means structures don't cancel → ghost edges. <b>Misregistration</b> is the dominant DSA artefact."},
+{ch:2,type:"single",q:"What distinguishes convolution from cross-correlation?",options:["Convolution uses a larger kernel","The kernel is mirrored (flipped) along both axes in convolution","Correlation uses negative weights","They are identical"],correct:1,ex:"In convolution the kernel is <b>mirrored</b> along both axes before the multiply-and-sum (the (x−m, y−n) indexing). Cross-correlation uses no mirroring."},
+{ch:2,type:"single",q:"Zero-padding the image border is done so that…",options:["the histogram changes","the kernel can be applied at edge pixels and output size matches input","edges are detected","noise is removed"],correct:1,ex:"<b>Zero-padding</b> adds border pixels so the kernel fits at the edges, keeping the output the same size as the input."},
+{ch:2,type:"single",q:"Arterial Spin Labeling (ASL) measures perfusion by…",options:["injecting iodine contrast","subtracting a label image (magnetically tagged blood) from a control image","thresholding the histogram","applying a Sobel filter"],correct:1,ex:"ASL magnetically labels arterial blood, then <b>subtracts label from control</b> to isolate inflowing blood signal ∝ cerebral blood flow — no exogenous contrast needed."},
+{ch:2,type:"single",q:"Zero-crossings of the second derivative (Laplacian) produce…",options:["thick, broken edges","thin, closed (one-pixel-wide) edge contours","only horizontal edges","a smoothed image"],correct:1,ex:"Zero-crossings of the Laplacian form <b>thin, closed contours</b> (Marr-Hildreth / LoG), giving cleaner, topologically connected edge maps than thresholding gradient magnitude."},
+
+/* CH3 */
+{ch:3,type:"single",q:"Does bilinear/bicubic interpolation change the image histogram?",options:["No — interpolation never affects the histogram","Yes — it creates new intermediate values not present in the source","Only for binary images","Only when downsampling"],correct:1,ex:"<b>Yes.</b> Averaging/polynomial weighting creates intensities between original values, reshaping the histogram. The classic wrong answer is 'it doesn't affect the histogram.' Nearest-neighbour is the exception (only replicates values)."},
+{ch:3,type:"single",q:"You are resampling a binary label mask. Which interpolation should you use?",options:["Bicubic","Bilinear","Nearest-neighbour","Gaussian"],correct:2,ex:"<b>Nearest-neighbour</b> preserves discrete labels. Bilinear/bicubic would average labels into spurious intermediate values."},
+{ch:3,type:"single",q:"Cropping an image changes which of the following?",options:["Pixel size","The image origin (and possibly the contrast range)","Spatial resolution","Nothing measurable"],correct:1,ex:"Crop changes the <b>origin</b> and may change the contrast range; pixel size and resolution stay the same. Zoom changes neither; resize changes pixel size and origin."},
+{ch:3,type:"single",q:"Windowing (selecting WL/WW) modifies the stored pixel values.",options:["True","False"],correct:1,ex:"<b>False.</b> Windowing is a display-only, fully reversible LUT operation — it maps a sub-range to greyscale, but the raw data is preserved."},
+{ch:3,type:"single",q:"Histogram equalization redistributes pixel values using…",options:["a linear min–max stretch","the cumulative distribution function (CDF)","a Gaussian kernel","Otsu's threshold"],correct:1,ex:"Equalization uses the <b>CDF</b> to push the output toward a uniform distribution. Contrast <i>stretching</i> is the linear min–max remap — don't confuse the two."},
+{ch:3,type:"single",q:"A CT slice is missing between slice 34 and 36. The appropriate fix is…",options:["Correct the image origin","Nearest-neighbour replication","Smooth (linear/bicubic) interpolation to estimate the intermediate slice","Re-threshold the volume"],correct:2,ex:"A missing continuous-valued slice needs <b>smooth interpolation</b>. (A misaligned mask, by contrast, is fixed by correcting the origin — not interpolation.)"},
+{ch:3,type:"single",q:"Image enhancement (e.g. contrast stretching, equalization)…",options:["adds new diagnostic information","improves true spatial resolution","only rearranges/emphasises existing data — it adds no information","removes all noise"],correct:2,ex:"Enhancement <b>never adds information</b>; it reshapes or emphasises existing data. It cannot recover detail lost to blur or noise."},
+{ch:3,type:"single",q:"Contrast stretching maps [min,max] to the full range. Its effect on the histogram is to…",options:["flatten it to uniform","spread (stretch) it across the full range while roughly preserving its shape","collapse it to two spikes","leave it untouched"],correct:1,ex:"Contrast stretching <b>spreads</b> the histogram to fill the dynamic range, roughly preserving its shape. Equalization (CDF-based) is what flattens toward uniform."},
+{ch:3,type:"single",q:"Pseudo-colouring via a LUT is useful because…",options:["it adds resolution","the human eye distinguishes colours better than grey levels","it compresses the image","it removes artefacts"],correct:1,ex:"Pseudo-colour maps grey values to colours, exploiting the eye's superior <b>colour discrimination</b> over grey levels. The underlying data is unchanged."},
+
+/* CH4 */
+{ch:4,type:"single",q:"The watershed transform simulates flooding starting from…",options:["local maxima (peaks)","local minima (valleys)","the image centre","the brightest pixel"],correct:1,ex:"Watershed floods from <b>local minima</b> — water fills valleys, ridges become boundaries. Main drawback: over-segmentation from noise."},
+{ch:4,type:"single",q:"Which statement about simple thresholding is correct?",options:["It groups pixels by spatial connectivity","It is shape-aware","It selects by intensity and will merge two disconnected tissues of the same intensity","It requires training data"],correct:2,ex:"Thresholding is <b>not shape-aware</b> — it assigns by intensity. Two separate tissues at the same HU always merge. Fast, but noise- and inhomogeneity-sensitive."},
+{ch:4,type:"order",q:"Put the Canny edge detection pipeline in the correct order.",steps:["Convert to greyscale","Gaussian denoising (blur)","Compute gradient in x and y (e.g. Sobel)","Compute edge magnitude and direction","Directional non-maximum suppression","Double thresholding (weak / strong)","Hysteresis (keep weak edges connected to strong)"],ex:"Canny: greyscale → Gaussian blur → Sobel gradient → magnitude+direction → non-max suppression (thin to 1px) → double threshold → hysteresis (drop isolated weak edges)."},
+{ch:4,type:"single",q:"In 2D, the minimal (face-connected) and full neighbourhoods are…",options:["8 and 4 neighbours","4 and 8 neighbours","6 and 26 neighbours","2 and 4 neighbours"],correct:1,ex:"2D: minimal = <b>4</b> (2N), full = <b>8</b> (3ᴺ−1). 3D: 6 vs 26. Switching connectivity can split or merge objects."},
+{ch:4,type:"single",q:"Otsu's method finds a threshold by…",options:["minimising inter-class variance","maximising inter-class variance (≡ minimising intra-class variance) on the histogram","picking the histogram peak","using a fixed HU value"],correct:1,ex:"Otsu picks the threshold that <b>maximises inter-class variance</b> on the histogram, used when intensity values aren't known in advance."},
+{ch:4,type:"multi",q:"Match the CT artefact to its cause — select ALL correct pairings.",options:["Ring ← detector miscalibration / element failure","Cupping ← beam hardening / photon starvation","Windmill ← helical pitch too high","Metal artefact ← low bit depth"],correct:[0,1,2],ex:"Ring = detector fault; cupping = beam hardening (centre darker); windmill = pitch too high. Metal artefacts come from high-attenuation implants (beam hardening + scatter), addressed by MAR — not from bit depth."},
+{ch:4,type:"single",q:"In region growing, the similarity threshold is often set as…",options:["a fixed 0.5","f·σ (a fraction of the standard deviation)","the histogram peak","2× the mean"],correct:1,ex:"Region growing adds neighbours within Δmax = <b>f·σ</b> of the running region mean/median. Comparing to the running mean (not the seed) lets it follow slow gradients while rejecting jumps."},
+{ch:4,type:"single",q:"The fast implementation of region growing is…",options:["nested loops over every dimension","flood fill (queue-based breadth-first expansion)","Otsu's method","a Sobel filter"],correct:1,ex:"<b>Flood fill</b> (queue-based BFS) is the efficient implementation for 2D and 3D. Nested loops are conceptually simple but very slow for large volumes."},
+{ch:4,type:"single",q:"An active contour (snake) minimises a total energy made of…",options:["only an image term","internal + image + (optional) user energy","only an internal smoothness term","gradient magnitude alone"],correct:1,ex:"E_total = E_internal (smoothness/elasticity) + E_image (attraction to edges) + E_user (optional constraints). Snakes are efficient but largely replaced by deep learning."},
+{ch:4,type:"single",q:"A single connected component in a segmentation may actually be…",options:["always exactly one object","a leak (region spilled through a narrow bridge) OR two genuinely adjoining objects","always noise","always two objects"],correct:1,ex:"Distinguishing a <b>leak</b> from two truly adjoining objects needs domain knowledge or post-processing (e.g. morphology). The component count alone can't tell them apart."},
+
+/* CH5 */
+{ch:5,type:"single",q:"For erosion (A⊖B), a pixel is kept only if the structuring element…",options:["overlaps the foreground","fits entirely inside the foreground","touches the background","is centred on a hole"],correct:1,ex:"Erosion keeps a pixel only when the SE <b>fits entirely</b> inside the object → shrinks objects, removes small ones, breaks thin bridges. Dilation needs only an overlap."},
+{ch:5,type:"single",q:"Opening (A∘B) is defined as…",options:["dilation then erosion","erosion then dilation","two erosions","two dilations"],correct:1,ex:"Opening = <b>erosion → dilation</b>: removes small bright specks, smooths contours, preserves larger objects. Closing is the reverse and fills small dark holes."},
+{ch:5,type:"single",q:"Opening removes small ___ features; closing fills small ___ features.",options:["dark; bright","bright (foreground); dark (background/hole)","bright; bright","large; small"],correct:1,ex:"Opening removes small <b>bright/foreground</b> specks; closing fills small <b>dark/background</b> holes. Order matters (opening ≠ closing); both are idempotent."},
+{ch:5,type:"single",q:"Switching connected-components from 4- to 8-connectivity tends to…",options:["increase the number of components","decrease the count (diagonally-touching groups merge)","leave the count unchanged","split every component"],correct:1,ex:"8-connectivity treats diagonals as connected → diagonally-touching clusters <b>merge</b> → fewer components. (This is the sample-exam labelling question.)"},
+{ch:5,type:"single",q:"What does the histogram of a binary image look like?",options:["A smooth bell curve","Exactly two spikes (at the two values present)","A flat uniform distribution","A single spike at zero"],correct:1,ex:"A binary image has two values, so its histogram is <b>two spikes</b>. The bar heights don't matter — only that there are two populated bins."},
+{ch:5,type:"single",q:"The outer boundary of a binary object A is extracted by…",options:["A ⊕ B","A ∘ B","A \\ (A⊖B)  — original minus its erosion","(A⊕B) ⊖ B"],correct:2,ex:"Boundary(A) = <b>A \\ (A⊖B)</b>. Erosion peels one layer; subtracting it leaves exactly the boundary pixels."},
+{ch:5,type:"single",q:"For detecting holes in a grey-scale fence image, the better pipeline is…",options:["erosion first, then thresholding","thresholding first, then erosion","dilation first, then thresholding","neither has any advantage"],correct:1,ex:"<b>Threshold → erode.</b> Erosion is a binary fit/no-fit operation, so it must act on a clean binary image. Eroding a grey image is a min-filter that doesn't isolate the hole shape."},
+{ch:5,type:"single",q:"The XOR of two observers' binary segmentations highlights…",options:["the consensus region","the region where the two observers disagree (the uncertain region)","the union","the smaller segmentation"],correct:1,ex:"XOR = (A∨B) ∧ ¬(A∧B) = pixels where exactly one observer labelled foreground → the <b>disagreement / uncertain region</b>. AND = intersection (minimal agreement); OR = union."},
+{ch:5,type:"single",q:"The SE origin not being centred causes dilation to…",options:["do nothing","shift the object in the direction away from the origin","shrink the object","invert the image"],correct:1,ex:"An off-centre <b>origin shifts</b> the grown pixels — useful for directional expansion, but an unintended asymmetric origin is a classic source of unexpected shifts."},
+{ch:5,type:"single",q:"A skeleton (medial axis) is obtained by…",options:["one dilation","iterative thinning/erosion until no more can be removed without breaking connectivity","thresholding","a single convolution"],correct:1,ex:"The <b>skeleton</b> is a 1-px-wide representation produced by iterative thinning; it preserves topology/connectivity and is used for vessel centrelines and shape analysis."},
+{ch:5,type:"single",q:"Which calcium score uses inter-slice interpolation (and is NOT Agatston)?",options:["Mass score","Volume score","Agatston score","Risk category"],correct:1,ex:"The <b>volume score</b> (V = V_voxel · N_voxel) may use interpolation for smoother 3D rendering; interpolation is used with volume scoring, not Agatston."},
+
+/* CH6 */
+{ch:6,type:"single",q:"What is the role of skip connections in a U-Net?",options:["Reduce parameters","Concatenate encoder feature maps into the decoder to restore spatial detail lost by pooling","Replace the bottleneck","Perform the final classification"],correct:1,ex:"Pooling discards exact boundary positions. <b>Skip connections</b> copy high-res encoder feature maps to the matching decoder stage → sharper boundaries. This is U-Net's key innovation."},
+{ch:6,type:"single",q:"In a CNN, the convolution kernel weights are…",options:["hand-designed by the engineer","fixed Sobel kernels","learned automatically during training","random and never updated"],correct:2,ex:"Unlike Chapter-2 filters, CNN kernel weights are <b>learned from data</b> — they are the network's weights. Early layers learn edges; deeper layers learn task-specific patterns."},
+{ch:6,type:"single",q:"Pooling in a CNN encoder primarily…",options:["adds spatial detail","reduces spatial dimensions but loses exact feature location","increases interpretability","is only used in the decoder"],correct:1,ex:"Pooling downsamples (less compute, some translation invariance) but <b>discards where</b> a feature is — which skip connections later restore."},
+{ch:6,type:"multi",q:"Select ALL situations where you'd prefer a traditional method over a U-Net.",options:["Simple structures with clear intensity contrast","Very limited annotated training data","A hard real-time constraint","Interpretability is critical","Heterogeneous tumours with mixed intensity"],correct:[0,1,2,3],ex:"Traditional methods are interpretable, fast, and need no training data — best for simple/well-contrasted structures, scarce data, real-time, or when explainability matters. U-Net wins for complex/heterogeneous structures with enough labelled data."},
+{ch:6,type:"single",q:"\"Garbage in = garbage out\" means…",options:["noisy images can't load","model performance is capped by annotation/ground-truth quality","you need a better GPU","augmentation is useless"],correct:1,ex:"Model quality is <b>bounded by ground-truth quality</b>. Inconsistent or wrong annotations cap achievable performance regardless of architecture."},
+{ch:6,type:"single",q:"The Universal Approximation Theorem states that a neural network can…",options:["only classify images","approximate any continuous mapping given enough capacity","never overfit","run without training"],correct:1,ex:"A NN can <b>approximate any continuous function</b> to arbitrary accuracy given sufficient capacity. The task is defined by the data and loss, not by redesigning the architecture."},
+{ch:6,type:"single",q:"Data augmentation primarily helps by…",options:["speeding up inference","synthetically increasing data size and teaching invariance → reducing overfitting","removing the need for a validation set","increasing bit depth"],correct:1,ex:"Augmentation (flips, rotations, noise, etc.) increases effective dataset size and teaches <b>invariance</b> to irrelevant variation → less overfitting."},
+{ch:6,type:"single",q:"In a U-Net, the bottleneck is…",options:["the input layer","the deepest, most compressed layer (global context, no spatial detail)","a skip connection","the output mask"],correct:1,ex:"The <b>bottleneck</b> is the deepest layer: a compact, information-dense representation with global context but little spatial detail (which the decoder + skip connections restore)."},
+{ch:6,type:"single",q:"A learning rate that is too LARGE tends to…",options:["train very slowly","cause the optimiser to overshoot and diverge","prevent any update","improve interpretability"],correct:1,ex:"Too large → the optimiser <b>overshoots and diverges</b>. Too small → slow training, may stick in local minima. The learning rate η scales the gradient step in w ← w − η∇L."},
+
+/* CH7 */
+{ch:7,type:"single",q:"Compactness (circularity) of a shape is defined as…",options:["P² / (4πA)","4πA / P²","A / P","P / A"],correct:1,ex:"Compactness = <b>4πA / P²</b>, equal to 1 for a perfect circle and lower for elongated/jagged shapes. Also called circularity or roundness."},
+{ch:7,type:"single",q:"Which statement about texture is correct?",options:["It can be measured at a single pixel","It is a property of a neighbourhood and cannot be defined at a single point","It ignores spatial arrangement","It only applies to binary images"],correct:1,ex:"Texture describes the <b>spatial arrangement</b> of intensities in a neighbourhood — it cannot be defined at one point. Small texels → fine texture; large → coarse."},
+{ch:7,type:"single",q:"Before computing Haralick features, the GLCM must be…",options:["thresholded","normalised into joint probabilities p(i,j)","inverted","turned into a histogram"],correct:1,ex:"Raw co-occurrence counts aren't probabilities — you must <b>normalise</b> the GLCM to p(i,j) first. The GLCM also depends on the chosen offset (distance + direction)."},
+{ch:7,type:"single",q:"A texture with HIGH energy and LOW entropy is…",options:["highly complex and unpredictable","very regular / repetitive / uniform","edge-dominated","pure noise"],correct:1,ex:"High energy = concentrated GLCM = <b>uniform/regular</b> texture; low entropy confirms low disorder. The opposite (low energy, high entropy) = complex/heterogeneous."},
+{ch:7,type:"single",q:"A Support Vector Machine is best described as a…",options:["minimum-distance classifier","maximum-margin classifier","clustering algorithm","convolutional network"],correct:1,ex:"An SVM finds the hyperplane that <b>maximises the margin</b> between classes; the closest points (support vectors) define it. The margin — not just correctness — is the objective."},
+{ch:7,type:"multi",q:"Fourier descriptors of a contour can be made invariant to which transformations?",options:["Translation (zero the DC term Z(0))","Rotation (take magnitudes |Z(k)|)","Scaling (normalise by |Z(1)|)","Local noise inside the region"],correct:[0,1,2],ex:"Fourier descriptors handle <b>translation</b> (remove Z(0)), <b>rotation</b> (magnitudes) and <b>scale</b> (normalise by |Z(1)|). They describe the boundary curve, not interior-region noise."},
+{ch:7,type:"single",q:"In run-length analysis, short-run emphasis (SRE) captures…",options:["coarse texture","fine texture","colour","edges only"],correct:1,ex:"<b>SRE</b> weights short runs heavily → <b>fine</b> texture. Long-run emphasis (LRE) weights long runs → coarse texture. GLRLM complements GLCM."},
+{ch:7,type:"single",q:"Eccentricity describes a shape such that…",options:["0 = line, 1 = circle","0 = circle, 1 = line","it equals the area","it equals the perimeter"],correct:1,ex:"Eccentricity is the axis ratio of the fitted ellipse: <b>0 = circle, 1 = line</b>. Solidity (region/convex-hull area) measures convexity instead."},
+{ch:7,type:"single",q:"Wavelet transforms differ from the Fourier transform in that they…",options:["are purely global","provide joint spatial AND frequency (multi-resolution) information","only work on binary images","cannot describe texture"],correct:1,ex:"Wavelets give <b>multi-resolution, joint spatial-frequency</b> decomposition (approximation + detail sub-bands), unlike the global Fourier transform."},
+
+/* CH8 */
+{ch:8,type:"single",q:"For binary masks, the Dice Similarity Coefficient equals which metric?",options:["Accuracy","Precision","The F1-score","Specificity"],correct:2,ex:"For binary masks, <b>Dice = F1</b> = 2·TP/(2·TP+FP+FN). Both reward overlap and ignore the large true-negative background."},
+{ch:8,type:"single",q:"Which relationship between Dice (DSC) and IoU always holds?",options:["IoU ≥ Dice","Dice ≥ IoU","They are always equal","Dice = 2·IoU"],correct:1,ex:"Since DSC = 2·IoU/(1+IoU) and IoU ∈ [0,1], the factor 2/(1+IoU) ≥ 1 → <b>Dice ≥ IoU</b> always. Both = 1 for a perfect match."},
+{ch:8,type:"single",q:"Why is accuracy misleading under severe class imbalance?",options:["It's hard to compute","A model predicting the majority class everywhere scores high accuracy while ignoring the minority class","It needs a 0.5 threshold","It only works for regression"],correct:1,ex:"With 90% negatives, always predicting 'negative' gives 90% accuracy yet finds zero positives. Read <b>sensitivity, precision and F1/Dice</b> together (the 4-cats-vs-16-dogs example)."},
+{ch:8,type:"single",q:"Which boundary metric is robust to a single far-off outlier point?",options:["Maximum Hausdorff distance (HD)","95th-percentile Hausdorff (HD95)","Dice","Accuracy"],correct:1,ex:"Plain HD takes the maximum minimum-distance, so one stray point dominates it. <b>HD95</b> uses the 95th percentile — robust to single outliers while still capturing boundary disagreement."},
+{ch:8,type:"single",q:"When classes are heavily imbalanced, which plot is preferred over ROC?",options:["Precision–recall curve","Scatter plot","ROC is always best","Box plot"],correct:0,ex:"The <b>precision–recall curve</b> ignores true negatives, so the large negative class can't inflate the score. ROC/AUC suits balanced classes; PR/AP suits rare-lesion detection."},
+{ch:8,type:"single",q:"Two reconstructions have identical MSE — one blurred, one noisy. Which metric distinguishes them, and how?",options:["PSNR — it's unrelated to MSE","SSIM — the blurred image preserves structure so scores higher","Accuracy — both score the same","Dice — it measures intensity"],correct:1,ex:"MSE is purely pixel-wise. <b>SSIM</b> compares luminance, contrast and structure, so the structure-preserving blurred image scores higher. (PSNR = 10·log₁₀(L²/MSE), so it tracks MSE.)"},
+{ch:8,type:"single",q:"On a ROC curve, a purely random classifier appears as…",options:["the point (0,1)","the diagonal line from (0,0) to (1,1), AUC = 0.5","a vertical line","the point (1,1)"],correct:1,ex:"A random classifier traces the <b>diagonal</b>, AUC = 0.5. A perfect one reaches (0,1) with AUC = 1. AUC is threshold-independent."},
+{ch:8,type:"single",q:"A ring-shaped prediction and a solid disc can have the same Dice. This illustrates that overlap metrics are…",options:["shape- and centre-unaware","always wrong","resolution-dependent","sensitive to outliers"],correct:0,ex:"Dice/IoU measure area overlap only — they are <b>shape- and centre-unaware</b>. That's why you also report a boundary metric (HD95) and check precision/recall separately."},
+{ch:8,type:"single",q:"Holes inside a predicted mask are invisible to which metric type?",options:["Overlap metrics (Dice/IoU)","Boundary-based metrics (HD, ASD)","Accuracy","Precision"],correct:1,ex:"<b>Boundary metrics</b> (HD, ASD) consider only the outer boundary, so internal holes go unpenalised. Always pair them with an overlap metric, which does detect the holes."},
+
+/* ---- harder ---- */
+{ch:1,type:"single",hard:true,q:"A 12-bit CT (4096 levels) is displayed on an 8-bit monitor (256 levels). Why is windowing needed?",options:["To permanently reduce the stored bit depth","Because the monitor cannot show all 4096 levels at once, so a chosen sub-range is mapped onto the 256 displayable levels","To add new grey levels","To remove noise"],correct:1,ex:"The monitor shows only 256 levels, far fewer than 4096. <b>Windowing</b> maps a chosen HU sub-range (WL/WW) onto the display range — reversibly, without altering the stored 12-bit data."},
+{ch:2,type:"multi",hard:true,q:"Select ALL TRUE statements about mean vs median filtering.",options:["The mean filter can be applied via the FFT","The median filter can be applied via the FFT","The median filter preserves step edges better than the mean filter","Both are equally effective against salt-and-pepper noise"],correct:[0,2],ex:"The mean filter is linear → a convolution → can use the FFT. The median is non-linear → no FFT. The median is edge-preserving and far better against salt-and-pepper noise, so edge-preservation is true but equal-effectiveness is false."},
+{ch:2,type:"single",hard:true,q:"Applying only the Sobel hx kernel (not hy) to an image gives…",options:["the full gradient magnitude","a response to vertical edges (the horizontal gradient ∂x)","a response to horizontal edges","a smoothed image"],correct:1,ex:"hx measures ∂x → it responds to <b>vertical edges</b>. For the full gradient magnitude √(gx²+gy²) you must combine the orthogonal pair hx AND hy."},
+{ch:4,type:"multi",hard:true,q:"Which of these are TUNABLE parameters of the Canny detector? Select all.",options:["Gaussian blur radius/strength","The low threshold T_low","The high threshold T_high","The per-pixel gradient direction Θ"],correct:[0,1,2],ex:"You tune the Gaussian strength and the two hysteresis thresholds (Otsu can set them automatically). The gradient direction Θ is <b>computed</b> from the image, not a free parameter."},
+{ch:4,type:"order",hard:true,q:"Put the watershed algorithm in the correct order.",steps:["Invert the image / apply a negative distance transform (interiors become valleys)","Identify local minima as catchment-basin seeds","Simulate rising water: grow each basin outward","Build a dam (watershed line) where two basins meet","Continue until the whole image is flooded"],ex:"Watershed floods from local minima: invert → seed at minima → flood/grow basins → dam where basins meet → continue to full flooding. Main risk: over-segmentation from noise."},
+{ch:5,type:"single",hard:true,q:"A vessel mask has small isolated noise specks AND small internal gaps. Which single pipeline removes the specks and fills the gaps?",options:["Opening, then closing","Closing, then opening","Erosion twice","Dilation twice"],correct:0,ex:"<b>Opening</b> (erode→dilate) removes small bright specks; <b>closing</b> (dilate→erode) then fills small dark gaps. Doing opening first avoids merging specks into the vessel before they're cleaned."},
+{ch:5,type:"single",hard:true,q:"Eroding an object with a 5×5 SE and then dilating with the same 5×5 SE (an opening) will…",options:["reconstruct the exact original object","remove features smaller than the SE while keeping larger objects roughly the same size","grow the object outward","fill internal holes"],correct:1,ex:"That two-step is an <b>opening</b>: it removes structures smaller than the SE (and smooths/rounds corners), but larger objects keep roughly their original size. It does not perfectly reconstruct the original and doesn't fill holes (that's closing)."},
+{ch:6,type:"multi",hard:true,q:"Which techniques specifically help with CLASS IMBALANCE in segmentation? Select all.",options:["Dice loss","Focal loss","Sampling strategies (e.g. oversampling the minority class)","Increasing the learning rate"],correct:[0,1,2],ex:"Dice loss and focal loss reweight toward the minority class, and sampling strategies rebalance the data. A larger learning rate only changes the step size — it doesn't address imbalance."},
+{ch:7,type:"single",hard:true,q:"A normalised GLCM shows HIGH contrast and LOW homogeneity. The texture is…",options:["uniform and smooth","coarse, with strong local intensity variation","pure noise with no structure","a single flat region"],correct:1,ex:"High contrast = large (i−j)² weighting → strong local variation; low homogeneity = mass far from the diagonal. Together → a <b>coarse, high-variation</b> texture, not a flat region."},
+{ch:8,type:"single",hard:true,q:"Two segmentations both have Dice = 0.85 but very different HD95. What does this tell you?",options:["The metrics are inconsistent and one is wrong","They have similar volume overlap, but one has a larger localized boundary error / outlier region","They are identical","One has a completely different total volume"],correct:1,ex:"Dice measures volume overlap and is shape/boundary-unaware. Equal Dice with different HD95 means similar overlap but <b>different boundary accuracy</b> — one has a worse localized deviation. Hence: always report an overlap AND a boundary metric."},
+{ch:8,type:"multi",hard:true,q:"For a trustworthy segmentation evaluation you should… Select all.",options:["Combine an overlap metric (Dice/IoU) with a boundary metric (HD95)","Report the per-case distribution, not just the mean","State which decision threshold was used","Rely on accuracy alone"],correct:[0,1,2],ex:"Never report a single number: pair an overlap metric with a boundary metric, show per-case spread (boxplots), and state the threshold. Accuracy alone is misleading, especially under class imbalance."}
+];
+
+/* ===================== prep (shuffle options) ===================== */
+function prepQuestion(orig){
+  const q=JSON.parse(JSON.stringify(orig));
+  if(q.type==="order") return q;
+  const order=q.options.map((_,i)=>i);
+  for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}
+  const newOpts=order.map(i=>q.options[i]);
+  if(q.type==="single"){ q.correct=order.indexOf(q.correct); }
+  else { const set=new Set(q.correct); q.correct=newOpts.map((_,p)=>set.has(order[p])?p:-1).filter(v=>v>=0); }
+  q.options=newOpts;
+  return q;
+}
+
+/* ===================== state + session ===================== */
+let activeCh="all", pool=[], idx=0, answers={};
+
+function buildSession(){
+  const stat=shuffle(STATIC.filter(q=>activeCh==="all"||q.ch===activeCh).slice());
+  const gens=GENERATORS.filter(g=>activeCh==="all"||g.ch===activeCh);
+  const target=activeCh==="all"?24:14;
+  const genWant=gens.length?Math.min(Math.round(target*0.5),gens.length*2):0;
+  const genQs=[]; for(let i=0;i<genWant;i++) genQs.push(pick(gens).gen());
+  const statQs=stat.slice(0,Math.max(0,target-genQs.length));
+  let deficit=target-genQs.length-statQs.length;
+  while(deficit>0&&gens.length){ genQs.push(pick(gens).gen()); deficit--; }
+  pool=shuffle(genQs.concat(statQs).map(prepQuestion));
+  idx=0; answers={};
+  window.__orderState=null; window.__multiSel=null;
+}
+
+/* ===================== filters ===================== */
+function renderFilters(){
+  const box=$("#filters"); box.innerHTML="";
+  const mk=(val,label)=>{const c=el("button","chip");c.textContent=label;if(val===activeCh)c.classList.add("active");
+    c.onclick=()=>{activeCh=val;buildSession();renderFilters();renderStage();renderSpectrum();};box.appendChild(c);};
+  mk("all","All chapters");
+  Object.keys(CH).forEach(k=>mk(Number(k),k+". "+CH[k]));
+}
+
+/* ===================== spectrum ===================== */
+function renderSpectrum(){
+  const spec=$("#spectrum"); spec.innerHTML=""; let correct=0,answered=0;
+  pool.forEach((q,i)=>{const b=el("div","bar");const a=answers[i];let h=22;
+    if(a){answered++;if(a.correct){correct++;b.classList.add("correct");}else b.classList.add("wrong");h=34;}
+    if(i===idx)b.classList.add("current");b.style.height=h+"px";spec.appendChild(b);});
+  $("#scoreNum").textContent=correct; $("#answeredNum").textContent=answered;
+  $("#poolMeta").textContent=(activeCh==="all"?"full bank":CH[activeCh])+" · "+pool.length+" questions";
+}
+
+/* ===================== stage ===================== */
+function renderStage(){
+  const stage=$("#stage"); stage.innerHTML="";
+  if(idx>=pool.length){renderResults(stage);renderSpectrum();return;}
+  const q=pool[idx], card=el("div","card");
+  const top=el("div","qtop");
+  const num=el("span","qnum"); num.textContent="Q"+String(idx+1).padStart(2,"0")+" / "+pool.length;
+  const bch=el("span","badge ch"); bch.textContent=q.ch+" · "+CH[q.ch];
+  const bty=el("span","badge type"); bty.textContent={single:"Choose one",multi:"Select all",order:"Order steps"}[q.type];
+  top.append(num,bch,bty);
+  if(q.gen){const g=el("span","badge gen");g.textContent="generated";top.appendChild(g);}
+  if(q.hard){const hb=el("span","badge hard");hb.textContent="challenge";top.appendChild(hb);}
+  card.appendChild(top);
+
+  const qt=el("div","qtext"); qt.innerHTML=q.q; card.appendChild(qt);
+  if(q.type==="multi"){const h=el("div","hint");h.textContent="Multiple answers may be correct.";card.appendChild(h);}
+  if(q.type==="order"){const h=el("div","hint");h.textContent="Click the steps in the order they should be performed.";card.appendChild(h);}
+  if(q.figure){const f=el("div","figure");f.innerHTML=q.figure;card.appendChild(f);}
+
+  if(q.type==="single") renderSingle(card,q);
+  else if(q.type==="multi") renderMulti(card,q);
+  else renderOrder(card,q);
+
+  stage.appendChild(card); renderNav(stage);
+}
+
+function renderSingle(card,q){
+  const wrap=el("div","options"), done=!!answers[idx];
+  q.options.forEach((opt,i)=>{const b=el("button","opt");
+    const k=el("span","key");k.textContent=KEYS[i];const t=el("span");t.style.flex="1";t.innerHTML=opt;b.append(k,t);
+    if(done){b.disabled=true;
+      if(i===q.correct){b.classList.add("correct");const m=el("span","mark");m.textContent="✓";b.appendChild(m);}
+      if(i===answers[idx].picked&&i!==q.correct){b.classList.add("wrong");const m=el("span","mark");m.textContent="✗";b.appendChild(m);}
+    } else b.onclick=()=>{answers[idx]={correct:i===q.correct,picked:i};renderStage();renderSpectrum();};
+    wrap.appendChild(b);});
+  card.appendChild(wrap);
+  if(done) appendExplain(card,q,answers[idx].correct);
+}
+
+function renderMulti(card,q){
+  const done=!!answers[idx], wrap=el("div","options");
+  if(!window.__multiSel||window.__multiSel.idx!==idx) window.__multiSel={idx,set:new Set()};
+  const picked=window.__multiSel.set;
+  q.options.forEach((opt,i)=>{const b=el("button","opt");
+    const k=el("span","key");k.textContent=KEYS[i];const t=el("span");t.style.flex="1";t.innerHTML=opt;b.append(k,t);
+    const isC=q.correct.includes(i);
+    if(done){b.disabled=true;const chose=answers[idx].picked.includes(i);
+      if(isC){b.classList.add("correct");const m=el("span","mark");m.textContent=chose?"✓":"+";b.appendChild(m);}
+      else if(chose){b.classList.add("wrong");const m=el("span","mark");m.textContent="✗";b.appendChild(m);}
+    } else {if(picked.has(i))b.classList.add("sel");
+      b.onclick=()=>{picked.has(i)?picked.delete(i):picked.add(i);renderStage();};}
+    wrap.appendChild(b);});
+  card.appendChild(wrap);
+  if(!done){const act=el("div","actions");const check=el("button","btn btn-primary");check.textContent="Check answer";
+    check.disabled=picked.size===0;
+    check.onclick=()=>{const sel=[...picked].sort((a,b)=>a-b);
+      const ok=sel.length===q.correct.length&&sel.every(v=>q.correct.includes(v));
+      answers[idx]={correct:ok,picked:sel};window.__multiSel=null;renderStage();renderSpectrum();};
+    act.appendChild(check);card.appendChild(act);
+  } else appendExplain(card,q,answers[idx].correct);
+}
+
+function renderOrder(card,q){
+  const done=!!answers[idx];
+  if(!window.__orderState||window.__orderState.idx!==idx){
+    const sh=q.steps.map((_,i)=>i);
+    for(let i=sh.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[sh[i],sh[j]]=[sh[j],sh[i]];}
+    window.__orderState={idx,order:sh,seq:[]};
+  }
+  const st=window.__orderState, wrap=el("div","order-pool");
+  if(done){
+    answers[idx].picked.forEach((orig,pos)=>{const slot=el("div","order-slot disabled");
+      const r=el("span","rank");r.textContent=pos+1;const t=el("span");t.style.flex="1";t.textContent=q.steps[orig];
+      const ok=orig===pos;slot.classList.add(ok?"ok":"bad");
+      const m=el("span");m.style.cssText="font-weight:700;margin-left:auto;color:"+(ok?"var(--correct)":"var(--wrong)");m.textContent=ok?"✓":"✗";
+      slot.append(r,t,m);wrap.appendChild(slot);});
+    card.appendChild(wrap);appendExplain(card,q,answers[idx].correct);return;
+  }
+  st.order.forEach(orig=>{const p=st.seq.indexOf(orig),placed=p!==-1;
+    const slot=el("div","order-slot"+(placed?" placed":""));
+    const r=el("span","rank");r.textContent=placed?(p+1):"·";const t=el("span");t.style.flex="1";t.textContent=q.steps[orig];
+    slot.append(r,t);
+    slot.onclick=()=>{placed?st.seq.splice(p,1):st.seq.push(orig);renderStage();};
+    wrap.appendChild(slot);});
+  card.appendChild(wrap);
+  const act=el("div","actions");const check=el("button","btn btn-primary");check.textContent="Check order";
+  check.disabled=st.seq.length!==q.steps.length;
+  check.onclick=()=>{const ok=st.seq.every((v,i)=>v===i);answers[idx]={correct:ok,picked:[...st.seq]};window.__orderState=null;renderStage();renderSpectrum();};
+  const reset=el("button","btn-link");reset.textContent="Reset";reset.onclick=()=>{st.seq=[];renderStage();};
+  act.append(check,reset);card.appendChild(act);
+}
+
+function appendExplain(card,q,ok){
+  const ex=el("div","explain "+(ok?"right":"wrong"));
+  const v=el("div","verdict");v.textContent=ok?"✓ Correct":"✗ Not quite";
+  const body=el("div");body.innerHTML=q.ex;ex.append(v,body);card.appendChild(ex);
+}
+
+function renderNav(stage){
+  const nav=el("div","nav");
+  const prev=el("button","btn btn-ghost");prev.textContent="← Previous";prev.disabled=idx===0;
+  prev.onclick=()=>{window.__orderState=null;window.__multiSel=null;idx--;renderStage();renderSpectrum();};
+  const next=el("button","btn btn-primary");next.textContent=idx===pool.length-1?"See results →":"Next →";
+  next.onclick=()=>{window.__orderState=null;window.__multiSel=null;idx++;renderStage();renderSpectrum();};
+  nav.append(prev,next);stage.appendChild(nav);
+}
+
+function renderResults(stage){
+  const card=el("div","card results");
+  const answered=pool.filter((_,i)=>answers[i]).length;
+  const correct=pool.filter((_,i)=>answers[i]&&answers[i].correct).length;
+  const pct=answered?Math.round(100*correct/answered):0;
+  const h=el("h2");h.textContent=answered?"Round complete":"Nothing answered yet";card.appendChild(h);
+  if(answered){
+    const big=el("div","bigscore");big.innerHTML=`${correct}<span style="color:var(--muted);font-size:32px"> / ${answered}</span> &nbsp;<span class="pct">${pct}%</span>`;card.appendChild(big);
+    const p=el("p");p.style.color="var(--muted)";p.style.fontSize="14.5px";
+    p.textContent=pct>=80?"Strong — core concepts are solid. Mop up the few misses and you're in good shape.":pct>=60?"Solid base. Target the chapters with red bars below in your next session.":"Worth another pass — re-read the key takeaways for the weakest chapters, then retry.";
+    card.appendChild(p);
+    const brk=el("div","breakdown");
+    Object.keys(CH).forEach(k=>{const qs=pool.map((q,i)=>({q,i})).filter(o=>o.q.ch==k&&answers[o.i]);if(!qs.length)return;
+      const ok=qs.filter(o=>answers[o.i].correct).length;
+      const row=el("div","brk-row");const lbl=el("span","lbl");lbl.textContent=k+". "+CH[k];
+      const track=el("div","brk-track");const fill=el("div","brk-fill");fill.style.width=(100*ok/qs.length)+"%";
+      if(ok/qs.length<0.6)fill.style.background="var(--wrong)";track.appendChild(fill);
+      const num=el("span","num");num.textContent=ok+"/"+qs.length;row.append(lbl,track,num);brk.appendChild(row);});
+    card.appendChild(brk);
+  }
+  const act=el("div","actions");act.style.justifyContent="center";act.style.marginTop="26px";
+  const fresh=el("button","btn btn-new");fresh.textContent="🔀 New exam";
+  fresh.onclick=()=>{buildSession();renderStage();renderSpectrum();window.scrollTo({top:0,behavior:"smooth"});};
+  const retry=el("button","btn btn-ghost");retry.textContent="Review answers";retry.disabled=answered===0;
+  retry.onclick=()=>{idx=0;renderStage();renderSpectrum();};
+  act.append(fresh,retry);card.appendChild(act);
+  stage.appendChild(card);
+}
+
+/* ===================== init ===================== */
+$("#newExam").onclick=()=>{buildSession();renderStage();renderSpectrum();window.scrollTo({top:0,behavior:"smooth"});};
+buildSession(); renderFilters(); renderStage(); renderSpectrum();
+</script>
+</body>
+</html>
